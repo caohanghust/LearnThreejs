@@ -1,5 +1,5 @@
 /**
- * @file   魔方
+ * @file   立方体
  * @author caohang (caohanghust@gmail.com)
  * @date   2018/3/29
  */
@@ -25,7 +25,7 @@ let demo = {
         this.renderer.setClearColor(0xFFFFFF, 1.0);
     },
     initCamera() {
-        this.camera = new THREE.PerspectiveCamera(45, width / height, .1, 1000);
+        this.camera = new THREE.PerspectiveCamera(60, width / height, .1, 1000);
         this.camera.position.x = -30;
         this.camera.position.y = 40;
         this.camera.position.z = 30;
@@ -55,9 +55,9 @@ let demo = {
         // this.scene.add(plane);
 
         let pos = {
-            x: 0,
-            y: 0,
-            z: 0
+            x: 5,
+            y: 5,
+            z: 5
         };
         this.addCube(pos, 10);
     },
@@ -68,26 +68,38 @@ let demo = {
             return new THREE.MeshBasicMaterial({color: item});
         });
         let bottom = new THREE.Mesh(planeGeometry, materials[0]);
+        bottom.position.x = pos.x;
+        bottom.position.y = pos.y;
         bottom.position.z = pos.z - long / 2;
         bottom.rotation.y = Math.PI;
 
         let top = new THREE.Mesh(planeGeometry, materials[1]);
+        top.position.x = pos.x;
+        top.position.y = pos.y;
         top.position.z = pos.z + long / 2;
 
         let left = new THREE.Mesh(planeGeometry, materials[2]);
         left.position.x = pos.x - long / 2;
+        left.position.y = pos.y;
+        left.position.z = pos.z;
         left.rotation.y = -.5 * Math.PI;
 
         let right = new THREE.Mesh(planeGeometry, materials[3]);
         right.position.x = pos.x + long / 2;
+        right.position.y = pos.y;
+        right.position.z = pos.z;
         right.rotation.y = .5 * Math.PI;
 
         let front = new THREE.Mesh(planeGeometry, materials[4]);
+        front.position.x = pos.x;
         front.position.y = pos.y + long / 2;
+        front.position.z = pos.z;
         front.rotation.x = -.5 * Math.PI;
 
         let behind = new THREE.Mesh(planeGeometry, materials[4]);
+        behind.position.x = pos.x;
         behind.position.y = pos.y - long / 2;
+        behind.position.z = pos.z;
         behind.rotation.x = .5 * Math.PI;
 
         this.scene.add(top);
@@ -95,6 +107,7 @@ let demo = {
         this.scene.add(left);
         this.scene.add(right);
         this.scene.add(front);
+        this.scene.add(behind);
     },
     addLine(start, end, config) {
         let geometry = new THREE.Geometry();
