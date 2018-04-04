@@ -40,6 +40,7 @@ let demo = {
     },
     initScene() {
         this.scene = new THREE.Scene();
+        this.scene.fog = new THREE.Fog(0xffffff, .015, 100);
     },
     initLight() {
         let spotLight = new THREE.SpotLight(0xffffff);
