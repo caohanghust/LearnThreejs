@@ -68,7 +68,7 @@ let demo = {
         // this.scene.add(plane);
 
         let pos = {
-            x: 10,
+            x: 20,
             y: 10,
             z: 10
         };
@@ -78,18 +78,33 @@ let demo = {
         let x = pos.x;
         let y = pos.y;
         let z = pos.z;
+        // let vertices = [
+        //     [x - d / 2, y - d / 2, z - d / 2],
+        //     [x + d / 2, y - d / 2, z - d / 2],
+        //
+        //     [x - d / 2, y + d / 2, z - d / 2],
+        //     [x + d / 2, y + d / 2, z - d / 2],
+        //
+        //     [x - d / 2, y - d / 2, z + d / 2],
+        //     [x + d / 2, y - d / 2, z + d / 2],
+        //
+        //     [x - d / 2, y + d / 2, z + d / 2],
+        //     [x + d / 2, y + d / 2, z + d / 2],
+        // ].map(item => {
+        //     return new THREE.Vector3(item[0], item[1], item[2]);
+        // });
         let vertices = [
-            [x - d / 2, y - d / 2, z - d / 2],
-            [x + d / 2, y - d / 2, z - d / 2],
+            [- d / 2, - d / 2, - d / 2],
+            [d / 2, - d / 2, - d / 2],
 
-            [x - d / 2, y + d / 2, z - d / 2],
-            [x + d / 2, y + d / 2, z - d / 2],
+            [- d / 2, d / 2, - d / 2],
+            [d / 2, d / 2, - d / 2],
 
-            [x - d / 2, y - d / 2, z + d / 2],
-            [x + d / 2, y - d / 2, z + d / 2],
+            [- d / 2, - d / 2, d / 2],
+            [d / 2, - d / 2, d / 2],
 
-            [x - d / 2, y + d / 2, z + d / 2],
-            [x + d / 2, y + d / 2, z + d / 2],
+            [- d / 2, d / 2, d / 2],
+            [d / 2, d / 2, d / 2],
         ].map(item => {
             return new THREE.Vector3(item[0], item[1], item[2]);
         });
@@ -116,8 +131,11 @@ let demo = {
         geom.faces = faces;
         geom.computeFaceNormals();
         let material = new THREE.MeshBasicMaterial({color: 0xff0000});
-        let cube = new THREE.Mesh(geom, material);
-        this.scene.add(cube);
+        this.cube = new THREE.Mesh(geom, material);
+        this.cube.position.x = pos.x;
+        this.cube.position.y = pos.y;
+        this.cube.position.z = pos.z;
+        this.scene.add(this.cube);
     },
     addLine(start, end, config) {
         let geometry = new THREE.Geometry();
@@ -132,6 +150,10 @@ let demo = {
     animation() {
         let delta = this.clock.getDelta();
         this.trackballControls.update(delta);
+
+        // this.cube.position.x += .1;
+        // this.cube.position.y += .1;
+        // this.cube.position.z += .1;
         this.renderer.render(this.scene, this.camera);
         requestAnimationFrame(this.animation.bind(this));
     }
