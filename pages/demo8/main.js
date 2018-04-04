@@ -23,7 +23,7 @@ let demo = {
         this.renderer.setSize(width, height);
         document.getElementById('canvas-frame').appendChild(this.renderer.domElement);
         this.renderer.setClearColor(0xFFFFFF, 1.0);
-
+        this.renderer.shadowMapEnabled = true;
         this.clock = new THREE.Clock();
     },
     initCamera() {
@@ -42,6 +42,10 @@ let demo = {
         this.scene = new THREE.Scene();
     },
     initLight() {
+        let spotLight = new THREE.SpotLight(0xffffff);
+        spotLight.position.set(-60, 60, 60);
+        spotLight.castShadow = true;
+        this.scene.add(spotLight);
     },
     initObject() {
         let black = 0x000000;
@@ -52,14 +56,15 @@ let demo = {
         let axes = new THREE.AxisHelper(20);
         this.scene.add(axes);
         // 平面
-        // let planeGeometry = new THREE.PlaneGeometry(60, 20, 1, 1);
-        // let planeMaterial = new THREE.MeshBasicMaterial({color: 0xcccccc});
-        // let plane = new THREE.Mesh(planeGeometry, planeMaterial);
-        // plane.rotation.x = -.5 * Math.PI;
-        // plane.position.x = 0;
-        // plane.position.y = 0;
-        // plane.position.z = 0;
-        // this.scene.add(plane);
+        let planeGeometry = new THREE.PlaneGeometry(60, 40, 1, 1);
+        let planeMaterial = new THREE.MeshLambertMaterial({color: 0xffffff});
+        let plane = new THREE.Mesh(planeGeometry, planeMaterial);
+        plane.rotation.x = -.5 * Math.PI;
+        plane.position.x = 0;
+        plane.position.y = 0;
+        plane.position.z = 0;
+        plane.receiveShadow = true;
+        this.scene.add(plane);
 
         let pos = {
             x: 5,
@@ -72,8 +77,10 @@ let demo = {
         let planeGeometry = new THREE.PlaneGeometry(long, long);
         let colors = [0x00ffff, 0xffff00, 0xff0000, 0x000000, 0x00ff00, 0x0000ff];
         let materials = colors.map(item => {
-            return new THREE.MeshBasicMaterial({color: item});
+            // return new THREE.MeshBasicMaterial({color: item});
+            return new THREE.MeshLambertMaterial({color: item});
         });
+
         let bottom = new THREE.Mesh(planeGeometry, materials[0]);
         bottom.position.x = pos.x;
         bottom.position.y = pos.y;
@@ -109,6 +116,12 @@ let demo = {
         behind.position.z = pos.z;
         behind.rotation.x = .5 * Math.PI;
 
+        top.castShadow = true;
+        bottom.castShadow = true;
+        left.castShadow = true;
+        right.castShadow = true;
+        front.castShadow = true;
+        behind.castShadow = true;
         this.scene.add(top);
         this.scene.add(bottom);
         this.scene.add(left);
