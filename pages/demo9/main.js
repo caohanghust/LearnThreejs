@@ -34,9 +34,9 @@ let demo = {
         this.camera.lookAt(this.scene.position);
 
         this.trackballControls = new THREE.TrackballControls(this.camera);
-        this.trackballControls.rotateSpeed = 1;
+        this.trackballControls.rotateSpeed = 3;
         this.trackballControls.zoomSpeed = 1;
-        this.trackballControls.panSpeed = 1;
+        this.trackballControls.panSpeed = 2;
     },
     initScene() {
         this.scene = new THREE.Scene();
