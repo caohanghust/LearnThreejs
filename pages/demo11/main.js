@@ -132,6 +132,7 @@ let demo = {
         let delta = this.clock.getDelta();
         this.trackballControls.update(delta);
 
+
         this.renderer.render(this.scene, this.camera);
         requestAnimationFrame(this.animation.bind(this));
 
