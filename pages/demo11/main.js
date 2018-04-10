@@ -57,7 +57,7 @@ let demo = {
         let axes = new THREE.AxisHelper(20);
         this.scene.add(axes);
 
-        this.rubik = this.generateRubik(50, 3);
+        this.rubik = this.generateRubik(100, 3);
         this.scene.add(this.rubik);
 
 
@@ -99,7 +99,7 @@ let demo = {
         return rubik;
     },
     faces(color, size) {
-        let solidWidth = 8;
+        let solidWidth = size / 10;
         let canvas = document.createElement('canvas');
         canvas.width = size;
         canvas.height = size;
@@ -132,12 +132,10 @@ let demo = {
         let delta = this.clock.getDelta();
         this.trackballControls.update(delta);
 
-
         this.renderer.render(this.scene, this.camera);
         requestAnimationFrame(this.animation.bind(this));
 
         TWEEN.update();
-
 
     }
 };
