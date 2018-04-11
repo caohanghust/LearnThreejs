@@ -7,8 +7,8 @@
 let demo = {
     init() {
         this.initThree();
-        this.initCamera();
         this.initScene();
+        this.initCamera();
         this.initLight();
         this.initObject();
         this.render.clear();
@@ -32,11 +32,7 @@ let demo = {
         this.camera.up.x = 0;
         this.camera.up.y = 0;
         this.camera.up.z = 0;
-        this.camera.lookAt({
-            x : 0,
-            y : 0,
-            z : 0
-        });
+        this.camera.lookAt(this.scene.position);
     },
     initScene() {
         this.scene = new THREE.Scene();

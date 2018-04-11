@@ -7,8 +7,8 @@
 let demo = {
     init() {
         this.initThree();
-        this.initCamera();
         this.initScene();
+        this.initCamera();
         this.initLight();
         this.initObject();
         this.initTween();
@@ -32,11 +32,7 @@ let demo = {
         // this.camera.up.x = 0;
         // this.camera.up.y = 1;
         // this.camera.up.z = 0;
-        this.camera.lookAt({
-            x : 0,
-            y : 0,
-            z : 0
-        });
+        this.camera.lookAt(this.scene.position);
     },
     initScene() {
         this.scene = new THREE.Scene();
@@ -70,9 +66,9 @@ let demo = {
     animation() {
         //renderer.clear();
         // this.render.clear();
-        this.camera.position.x = this.camera.position.x + .2;
-        this.camera.position.y = this.camera.position.y + .5;
-        this.camera.position.z = this.camera.position.z + 1;
+        // this.camera.position.x = this.camera.position.x + .2;
+        // this.camera.position.y = this.camera.position.y + .5;
+        // this.camera.position.z = this.camera.position.z + 1;
         this.renderer.render(this.scene, this.camera);
         requestAnimationFrame(this.animation.bind(this));
         TWEEN.update();
