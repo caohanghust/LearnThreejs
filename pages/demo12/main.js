@@ -3,16 +3,24 @@
  * @author caohang (caohanghust@gmail.com)
  * @date   2018/4/11
  */
-
+let createMesh = geometry => {
+    let meshMaterial = new THREE.MeshNormalMaterial();
+    meshMaterial.side = THREE.DoubleSide;
+    let wireFrameMaterial = new THREE.MeshBasicMaterial();
+    wireFrameMaterial.wireframe = true;
+    let mesh = THREE.SceneUtils.createMultiMaterialObject(geometry, [meshMaterial, wireFrameMaterial]);
+    console.log(mesh);
+    return mesh;
+};
 let demo = {
     init() {
         this.initThree();
         this.initScene();
         this.initCamera();
         this.initLight();
+        this.initText();
         this.initObject();
         this.initTween();
-
         this.initRaycaster();
         this.animation();
     },
@@ -50,6 +58,29 @@ let demo = {
         spotLight.castShadow = true;
         this.scene.add(spotLight);
     },
+    initText() {
+        let self = this;
+
+        let loader = new THREE.FontLoader();
+        loader.load('../../lib/fonts/FZLTH_Regular.json', function (font) {
+            let options = {
+                size: 50,
+                height: 10,
+                font: font,
+                bevelThickness: 2,
+                bevelSize: 4,
+                bevelSegments: 3,
+                bevelEnabled: true,
+                curveSegments: 12,
+                steps: 1
+            };
+            let text = createMesh(new THREE.TextGeometry('魔方', options));
+            text.position.z = -100;
+            text.position.y = 200;
+            text.position.x = -100;
+            self.scene.add(text);
+        });
+    },
     initObject() {
         let black = 0x000000;
         let red = 0xff0000;
@@ -74,7 +105,6 @@ let demo = {
         let faceMaterial = new THREE.MeshFaceMaterial(matArray);
         let cubeGeom = new THREE.BoxGeometry(itemSize / 2, itemSize / 2, itemSize / 2);
         let temp;
-        let rubik = new THREE.Object3D();
         for (let x = 0; x < order; x++) {
             for (let y = 0; y < order; y++) {
                 for (let z = 0; z < order; z++) {
