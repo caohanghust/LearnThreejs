@@ -171,6 +171,7 @@ let demo = {
         selectedList.forEach(item => {
             item.visible = true;
             rotateAroundWorldZ(item, Math.PI / 2);
+            this.isMoving = false;
         });
     },
     animation() {
