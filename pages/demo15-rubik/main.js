@@ -71,12 +71,8 @@ let demo = {
         this.rubik = this.generateRubik(100, 3);
         this.scene.add(this.rubik);
 
-        console.log(this.rubik);
-        let center = {
-            x: 0,
-            y: 0,
-            z: 100
-        };
+        this.isMoving = false;
+
         // this.selected = new THREE.Object3D();
         // this.selected.add(this.rubik.children[0], this.rubik.children[1], this.rubik.children[2],
         //     this.rubik.children[3], this.rubik.children[4], this.rubik.children[5], this.rubik.children[6], this.rubik.children[7], this.rubik.children[8]);
@@ -151,42 +147,47 @@ let demo = {
         }, false);
     },
     doMove(pos) {
-        let center = {
-            x: 0,
-            y: 0,
-            z: 100
-        };
+        let self = this;
         let group = new THREE.Object3D();
-        let selected = this.rubik.children.filter(item => {
+        let selectedList = this.rubik.children.filter(item => {
             return item.position.z === pos.z;
         });
-        selected.forEach(item => {
-            group.add(item);
+        // 克隆选中的元素进行组转动动画，动画结束后计算每个元素的结束位置
+        selectedList.forEach(item => {
+            group.add(item.clone());
+            item.visible = false;
         });
-
+        new TWEEN.Tween(group.rotation)
+            .to({z: Math.PI / 2}, 2000)
+            .repeat(0)
+            .start()
+            .onComplete(function () {
+                self.moveEnd(group, selectedList);
+            });
         this.scene.add(group);
-        console.log(group.children[0].position);
-        // group.position.x += 100;
-        console.log(group.children[0].position);
-
-        // selected.forEach(item => {
-        //     this.rubik.add(item);
-        // })
+    },
+    moveEnd(group, selectedList) {
+        group.visible = false;
+        selectedList.forEach(item => {
+            item.visible = true;
+            rotateAroundWorldZ(item, Math.PI / 2);
+        });
     },
     animation() {
         let delta = this.clock.getDelta();
         this.trackballControls.update(delta);
         // this.selected.rotation.x += .01;
-        for (let i = 0; i < 27; i += 3) {
-            rotateAroundWorldZ(this.rubik.children[i], .01);
-        }
+        // for (let i = 0; i < 27; i += 3) {
+        //     rotateAroundWorldZ(this.rubik.children[i], .01);
+        // }
 
         this.raycaster.setFromCamera(this.mouse, this.camera);
         let intersects = this.raycaster.intersectObjects(this.rubik.children);
-        if (intersects.length > 0) {
+        if (intersects.length > 0 && !this.isMoving) {
             // intersects[0].object.rotation.x += Math.PI / 10;
+            this.isMoving = true;
             let position = intersects[0].object.position;
-            // this.doMove(position);
+            this.doMove(position);
             // console.log(intersects[0].object.position)
         }
 
