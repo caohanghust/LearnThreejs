@@ -2,6 +2,7 @@
 <html>
 <head>
     <title></title>
+    <meta charset="UTF-8">
     <style>canvas { width: 100%; height: 100% }</style>
     <script src="../../lib/three.js"></script>
     <script src="../../lib/controls/TrackballControls.js"></script>
@@ -18,10 +19,28 @@
             height: 600px;
             background-color: #000000;
         }
+        .tools {
+            position: absolute;
+            color: #fff;
+        }
+        .tools li {
+            margin: 20px;
+        }
+        .tools li.selected {
+            color: #f00;
+        }
     </style>
 </head>
 
 <body>
+<ul class="tools" id="tools">
+    <li data-value="1">Z轴顺时针</li>
+    <li data-value="-1">Z轴逆时针</li>
+    <li data-value="2">Y轴顺时针</li>
+    <li data-value="-2">Y轴逆时针</li>
+    <li data-value="3">X轴顺时针</li>
+    <li data-value="-3">X轴逆时针</li>
+</ul>
 <div id="canvas-frame"></div>
 <script src="main.js"></script>
 </body>

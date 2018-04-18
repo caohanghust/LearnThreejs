@@ -121,14 +121,34 @@ let demo = {
         this.scene.add(this.rubik);
 
         this.initRubikState();
-        // this.selected = new THREE.Object3D();
-        // this.selected.add(this.rubik.children[0], this.rubik.children[1], this.rubik.children[2],
-        //     this.rubik.children[3], this.rubik.children[4], this.rubik.children[5], this.rubik.children[6], this.rubik.children[7], this.rubik.children[8]);
-        // this.selected = this.changePivot(this.selected);
-        // this.scene.add(this.selected);
-        //
-        // console.log(this.rubik);
+        this.initEvent();
+    },
+    initEvent() {
+        let toolsNode = document.getElementById('tools');
+        toolsNode.addEventListener('click', e => {
+            let node = e.target;
+            if (node.tagName === 'LI') {
+                let allNodes = toolsNode.children;
+                Array.prototype.forEach.call(allNodes, function (item) {
+                    item.className = '';
+                });
+                let value = node.dataset.value;
+                this.direction = Number(value);
+                node.className = 'selected';
+            }
+        });
 
+        let canvasNode = document.getElementById('canvas-frame');
+        canvasNode.addEventListener('click', e => {
+            this.raycaster.setFromCamera(this.mouse, this.camera);
+            let intersects = this.raycaster.intersectObjects(this.rubik.children);
+            if (intersects.length > 0 && !this.isMoving && this.direction !== 0) {
+                this.isMoving = true;
+                let position = intersects[0].object.position;
+                console.log(intersects[0].object.name);
+                this.doMove(position, this.direction);
+            }
+        });
     },
     initRubikState() {
         this.isMoving = false;
@@ -136,7 +156,7 @@ let demo = {
         // 其中：0默认值不转动 1、-1 绕Z轴顺时针、逆时针转动
         // 2、-2 绕Y轴顺时针逆时针转动
         // 3、-3 绕X轴顺时针逆时针转动
-        direction = 1;
+        this.direction = 0;
     },
     doMove(pos, direction) {
         if (direction === 0) {
@@ -262,8 +282,7 @@ let demo = {
         return wrapper;
     },
     initTween() {
-        // new TWEEN.Tween(this.selected.rotation)
-        //     .to( { x: Math.PI / 2 }, 1000 ).repeat( 0 ).start();
+
     },
     initRaycaster() {
         this.raycaster = new THREE.Raycaster();
@@ -277,22 +296,6 @@ let demo = {
     animation() {
         let delta = this.clock.getDelta();
         this.trackballControls.update(delta);
-        // this.selected.rotation.x += .01;
-        // for (let i = 0; i < 27; i += 3) {
-        //     rotateAroundWorldZ(this.rubik.children[i], .01);
-        // }
-
-        this.raycaster.setFromCamera(this.mouse, this.camera);
-        let intersects = this.raycaster.intersectObjects(this.rubik.children);
-        if (intersects.length > 0 && !this.isMoving) {
-            // intersects[0].object.rotation.x += Math.PI / 10;
-            this.isMoving = true;
-            let position = intersects[0].object.position;
-            console.log(intersects[0].object.name);
-            this.doMove(position, direction);
-            // console.log(intersects[0].object.position)
-        }
-
 
         this.renderer.render(this.scene, this.camera);
         requestAnimationFrame(this.animation.bind(this));
