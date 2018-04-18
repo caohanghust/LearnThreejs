@@ -11,7 +11,7 @@ let AXISZ = 1,
     AXISY_REVERSE = -2;
     AXISX_REVERSE = -3;
 
-// todo 这个函数有问题，以后修复
+// todo 这个函数有问题，稍后修复
 let rotateAroundWorld = function (obj, rad, axis) {
     let x0 = obj.position.x;
     let y0 = obj.position.y;
@@ -117,10 +117,41 @@ let demo = {
         let axes = new THREE.AxisHelper(2000);
         this.scene.add(axes);
 
-        this.rubik = this.generateRubik(100, 3);
+        let itemSize = 100;
+        let offset = 100 * 3 / 2 - 100 / 2;
+
+        let matArray = ['#0000ff', '#00ff00', '#ff0000', '#00ffff', '#ff00ff', '#ffff00'].reduce((result, item) => {
+            let texture = new THREE.Texture(this.faces(item, 100));
+            texture.needsUpdate = true;
+            let material = new THREE.MeshBasicMaterial({map: texture});
+            result.push(material);
+            return result;
+        }, []);
+        let faceMaterial = new THREE.MeshFaceMaterial(matArray);
+        let cubeGeom = new THREE.BoxGeometry(100, 100, 100);
+
+        this.rubik = new THREE.Object3D();
+
+        this.temp = new THREE.Mesh(cubeGeom, faceMaterial);
+        this.temp.position.x = 1 * itemSize - offset;
+        this.temp.position.y = 1 * itemSize - offset;
+        this.temp.position.z = 3 * itemSize - offset;
+
+        this.temp2 = new THREE.Mesh(cubeGeom, faceMaterial);
+        this.temp2.position.x = 2 * itemSize - offset;
+        this.temp2.position.y = 1 * itemSize - offset;
+        this.temp2.position.z = 3 * itemSize - offset;
+
+        this.rubik.add(this.temp);
+        this.rubik.add(this.temp2);
+        // this.scene.add(this.temp);
         this.scene.add(this.rubik);
 
-        this.initRubikState();
+
+        // this.rubik = this.generateRubik(100, 3);
+        // this.scene.add(this.rubik);
+
+        // this.initRubikState();
         // this.selected = new THREE.Object3D();
         // this.selected.add(this.rubik.children[0], this.rubik.children[1], this.rubik.children[2],
         //     this.rubik.children[3], this.rubik.children[4], this.rubik.children[5], this.rubik.children[6], this.rubik.children[7], this.rubik.children[8]);
@@ -130,111 +161,7 @@ let demo = {
         // console.log(this.rubik);
 
     },
-    initRubikState() {
-        this.isMoving = false;
-        // direction一共7个值
-        // 其中：0默认值不转动 1、-1 绕Z轴顺时针、逆时针转动
-        // 2、-2 绕Y轴顺时针逆时针转动
-        // 3、-3 绕X轴顺时针逆时针转动
-        direction = 1;
-    },
-    doMove(pos, direction) {
-        if (direction === 0) {
-            return;
-        }
-        let self = this;
-        let group = new THREE.Object3D();
-        let selectedList = this.rubik.children.filter(item => {
-            let isSelected = false;
-            switch (Math.abs(direction)) {
-                case AXISZ:
-                    return Math.floor(Math.abs(item.position.z - pos.z)) === 0;
-                    break;
-                case AXISY:
-                    return Math.floor(Math.abs(item.position.y - pos.y)) === 0;
-                    break;
-                case AXISX:
-                    return Math.floor(Math.abs(item.position.x - pos.x)) === 0;
-                    break;
-                default:
-                    return false;
 
-            }
-        });
-        // 克隆选中的元素进行组转动动画，动画结束后计算每个元素的结束位置
-        selectedList.forEach(item => {
-            group.add(item.clone());
-            item.visible = false;
-        });
-        let toState = {};
-        switch (direction) {
-            case AXISZ:
-                toState.z = -Math.PI / 2;
-                break;
-            case AXISZ_REVERSE:
-                toState.z = Math.PI / 2;
-                break;
-            case AXISY:
-                toState.y = -Math.PI / 2;
-                break;
-            case AXISY_REVERSE:
-                toState.y = Math.PI / 2;
-                break;
-            case AXISX:
-                toState.x = Math.PI / 2;
-                break;
-            case AXISX_REVERSE:
-                toState.x = -Math.PI / 2;
-                break;
-        }
-        new TWEEN.Tween(group.rotation)
-            .to(toState, 1000)
-            .repeat(0)
-            .start()
-            .onComplete(function () {
-                self.moveEnd(group, selectedList, direction);
-            });
-        this.scene.add(group);
-    },
-    moveEnd(group, selectedList, direction) {
-        let rotate = Math.PI / 2;
-        if (direction < 0) {
-            rotate = -rotate;
-        }
-        group.visible = false;
-        selectedList.forEach(item => {
-            item.visible = true;
-            rotateAroundWorld(item, rotate, direction);
-            this.isMoving = false;
-        });
-    },
-    generateRubik(itemSize, order) {
-        let offset = itemSize * order / 2 - itemSize / 2;
-        let matArray = ['#0000ff', '#00ff00', '#ff0000', '#00ffff', '#ff00ff', '#ffff00'].reduce((result, item) => {
-            let texture = new THREE.Texture(this.faces(item, itemSize));
-            texture.needsUpdate = true;
-            let material = new THREE.MeshBasicMaterial({map: texture});
-            result.push(material);
-            return result;
-        }, []);
-        let faceMaterial = new THREE.MeshFaceMaterial(matArray);
-        let cubeGeom = new THREE.BoxGeometry(itemSize, itemSize, itemSize);
-        let temp;
-        let rubik = new THREE.Object3D();
-        for (let x = 0; x < order; x++) {
-            for (let y = 0; y < order; y++) {
-                for (let z = 0; z < order; z++) {
-                    temp = new THREE.Mesh(cubeGeom, faceMaterial);
-                    temp.position.x = x * itemSize - offset;
-                    temp.position.y = y * itemSize - offset;
-                    temp.position.z = z * itemSize - offset;
-                    temp.name = 'x' + x + 'y' + y + 'z' + z;
-                    rubik.add(temp);
-                }
-            }
-        }
-        return rubik;
-    },
     faces(color, size) {
         let solidWidth = size / 10;
         let canvas = document.createElement('canvas');
@@ -254,13 +181,7 @@ let demo = {
         }
         return canvas;
     },
-    changePivot(obj) {
-        let wrapper = new THREE.Object3D();
-        wrapper.position.set(100, 0, 0);
-        wrapper.add(obj);
-        obj.position.set(-100, 0, 0);
-        return wrapper;
-    },
+
     initTween() {
         // new TWEEN.Tween(this.selected.rotation)
         //     .to( { x: Math.PI / 2 }, 1000 ).repeat( 0 ).start();
@@ -281,19 +202,10 @@ let demo = {
         // for (let i = 0; i < 27; i += 3) {
         //     rotateAroundWorldZ(this.rubik.children[i], .01);
         // }
-
+        this.rubik.children.forEach(item => {
+            rotateAroundWorld(item, .01, 3);
+        });
         this.raycaster.setFromCamera(this.mouse, this.camera);
-        let intersects = this.raycaster.intersectObjects(this.rubik.children);
-        if (intersects.length > 0 && !this.isMoving) {
-            // intersects[0].object.rotation.x += Math.PI / 10;
-            this.isMoving = true;
-            let position = intersects[0].object.position;
-            console.log(intersects[0].object.name);
-            this.doMove(position, direction);
-            // console.log(intersects[0].object.position)
-        }
-
-
         this.renderer.render(this.scene, this.camera);
         requestAnimationFrame(this.animation.bind(this));
 
