@@ -11,7 +11,6 @@ let AXISZ = 1,
     AXISY_REVERSE = -2;
     AXISX_REVERSE = -3;
 
-// todo 这个函数有问题，稍后修复
 let rotateAroundWorld = function (obj, rad, axis) {
     let x0 = obj.position.x;
     let y0 = obj.position.y;
