@@ -45,10 +45,9 @@ let demo = {
         // this.scene.fog = new THREE.Fog(0xffffff, .015, 100);
     },
     initLight() {
-        let spotLight = new THREE.SpotLight(0xffffff);
-        spotLight.position.set(-60, 60, 60);
-        spotLight.castShadow = true;
-        this.scene.add(spotLight);
+        let light = new THREE.AmbientLight(0xffffff);
+        light.position.set(100, 100, 200);
+        this.scene.add(light);
     },
     initObject() {
         let black = 0x000000;
@@ -70,6 +69,30 @@ let demo = {
         let ball = new THREE.Mesh(ballGemo, material);
         this.scene.add(ball);
 
+        let boxGemo = new THREE.BoxGeometry(200, 200, 20);
+        let texture1 = THREE.ImageUtils.loadTexture('stone.jpg');
+        let bump = new THREE.ImageUtils.loadTexture('stone-bump.jpg');
+        let mat1 = new THREE.MeshPhongMaterial({
+            // color: 0xff0000,
+            // wireframe: true,
+            // wireframeLinewidth: 1
+            map: texture1,
+            bumpMap: bump,
+            bumpScale: 2
+        });
+        let box1 = new THREE.Mesh(boxGemo, mat1);
+        box1.position.set(400, 0, 0);
+        this.scene.add(box1);
+
+        let mat2 = new THREE.MeshPhongMaterial({
+            // color: 0xff0000,
+            // wireframe: true,
+            // wireframeLinewidth: 1
+            map: texture1
+        });
+        let box2 = new THREE.Mesh(boxGemo, mat2);
+        box2.position.set(0, 400, 0);
+        this.scene.add(box2);
 
     },
 
