@@ -1,7 +1,7 @@
 /**
- * @file   objloader
+ * @file   着色器
  * @author caohang (caohanghust@gmail.com)
- * @date   2018/3/29
+ * @date   2018/5/04
  */
 
 let demo = {
@@ -51,15 +51,39 @@ let demo = {
     },
     initObject() {
         let self = this;
-        let black = 0x000000;
-        let red = 0xff0000;
-        let green = 0x00ff00;
-        let blue = 0x0000ff;
         // 坐标轴
-        let axes = new THREE.AxisHelper(200);
+        let axes = new THREE.AxisHelper(2000);
         this.scene.add(axes);
 
         this.loadLayer(4, 127);
+
+
+
+        let boxGemo = new THREE.SphereGeometry(100, 100, 100);
+        let path = "pano/";
+        let format = '.jpg';
+        let urls = [
+            path + 'posx' + format, path + 'negx' + format,
+            path + 'posy' + format, path + 'negy' + format,
+            path + 'posz' + format, path + 'negz' + format
+        ];
+        let textureCube = new THREE.CubeTextureLoader().load( urls );
+        textureCube.format = THREE.RGBFormat;
+        let shader = THREE.FresnelShader;
+        let uniforms = THREE.UniformsUtils.clone( shader.uniforms );
+        uniforms[ "tCube" ].value = textureCube;
+        let material = new THREE.ShaderMaterial( {
+            uniforms: uniforms,
+            vertexShader: shader.vertexShader,
+            fragmentShader: shader.fragmentShader,
+            side: THREE.DoubleSide
+        } );
+
+        let box = new THREE.Mesh(boxGemo, material);
+
+
+        this.scene.add(box);
+
     },
     async loadLayer (layer, max) {
         let step = 8;
@@ -78,7 +102,18 @@ let demo = {
                 group.add(obj);
             }
         }
+        let expectSize = 1000;
+        let boudingBoxSize = this.getBoundingBox(group);
+        let scaleRadio = expectSize / (boudingBoxSize.max.x - boudingBoxSize.min.x) ;
+        window.group = group;
+        group.scale.set(scaleRadio, scaleRadio, scaleRadio);
+        group.position.z -= boudingBoxSize.min.z * 2;
+
         this.scene.add(group);
+    },
+    getBoundingBox(obj) {
+        let box = new THREE.Box3();
+        return box.expandByObject(obj);
     },
     loadMaterial(name) {
         return new Promise(resolve => {
