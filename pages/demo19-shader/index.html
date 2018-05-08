@@ -6,6 +6,7 @@
     <style>canvas { width: 100%; height: 100% }</style>
     <script src="../../lib/three.js"></script>
     <script src="../../lib/controls/TrackballControls.js"></script>
+    <!--<script src="../../lib/controls/PointerLockControls.js"></script>-->
     <script src="../../lib/loader/OBJLoader.js"></script>
     <script src="../../lib/loader/MTLLoader.js"></script>
     <script src="../../lib/shader/FresnelShader.js"></script>
@@ -38,6 +39,71 @@
 <body>
 
 <div id="canvas-frame"></div>
+<script id="vs" type="x-shader/x-vertex">
+uniform vec3 pano0Position;
+uniform mat4 pano0Matrix;
+uniform vec3 pano1Position;
+uniform mat4 pano1Matrix;
+
+varying vec2 vUv;
+varying vec3 vWorldPosition0;
+varying vec3 vWorldPosition1;
+
+void main() {
+  vUv = uv;
+  vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+
+  vec3 positionLocalToPanoCenter0 = worldPosition.xyz - pano0Position;
+  vWorldPosition0 = (vec4(positionLocalToPanoCenter0, 1.0) * pano0Matrix).xyz;
+  vWorldPosition0.x *= -1.0;
+
+  vec3 positionLocalToPanoCenter1 = worldPosition.xyz - pano1Position;
+  vWorldPosition1 = (vec4(positionLocalToPanoCenter1, 1.0) * pano1Matrix).xyz;
+  vWorldPosition1.x *= -1.0;
+
+  gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+}
+</script>
+<script id="fs" type="x-shader/x-fragment">
+uniform sampler2D map;
+uniform float modelAlpha;
+uniform float opacity;
+uniform float progress;
+uniform float blackoutProgress;
+uniform int blackout;
+
+uniform vec3 pano0Position;
+uniform samplerCube pano0Map;
+
+uniform vec3 pano1Position;
+uniform samplerCube pano1Map;
+
+varying vec2 vUv;
+varying vec3 vWorldPosition0;
+varying vec3 vWorldPosition1;
+
+void main() {
+  vec3 cp0 = vWorldPosition0.xyz;
+  vec3 cp1 = vWorldPosition1.xyz;
+
+  vec4 colorFromPano0 = textureCube(pano0Map, cp0);
+  vec4 colorFromPano1 = textureCube(pano1Map, cp1);
+
+  const vec4 BLACK = vec4(0.0, 0.0, 0.0, 1.0);
+  vec4 colorFromPanos;
+
+  if (blackout != 0) {
+    colorFromPanos = mix(colorFromPano0, BLACK, min(1.0, blackoutProgress * 3.0));
+    colorFromPanos = mix(colorFromPanos, colorFromPano1, max(0.0, blackoutProgress * 3.0 - 2.0));
+  } else {
+    colorFromPanos = mix(colorFromPano0, colorFromPano1, progress);
+  }
+
+  vec4 colorFromTexture = texture2D(map, vUv);
+  colorFromPanos = mix(colorFromPanos, colorFromTexture, modelAlpha);
+  gl_FragColor = vec4(colorFromPanos.rgb, opacity);
+}
+</script>
 <script src="main.js"></script>
 </body>
 </html>
