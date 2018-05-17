@@ -77,11 +77,12 @@ let demo = {
         this.width = document.getElementById('canvas-frame').clientWidth;
         this.height = document.getElementById('canvas-frame').clientHeight;
         this.renderer = new THREE.WebGLRenderer({
-            antialias : true
+            antialias: true,
+            alpha: true
         });
         this.renderer.setSize(this.width, this.height);
         document.getElementById('canvas-frame').appendChild(this.renderer.domElement);
-        this.renderer.setClearColor(0x000000, 1.0);
+        this.renderer.setClearColor(0x000000, .5);
         this.renderer.shadowMapEnabled = true;
         this.clock = new THREE.Clock();
     },
