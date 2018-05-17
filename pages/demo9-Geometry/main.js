@@ -68,11 +68,48 @@ let demo = {
         // this.scene.add(plane);
 
         let pos = {
-            x: 20,
-            y: 10,
-            z: 10
+            x: 0,
+            y: 0,
+            z: 0
         };
-        this.addCube(pos, 10);
+        // this.addCube(pos, 10);
+        this.addArrow(pos)
+
+    },
+    addArrow(pos) {
+        let unit = 10
+        let {x, y, z} = pos
+        let vertices = [
+          [x + 1 * unit, y, z],
+          [x + 2 * unit, y, z],
+          [x, y, z + 2 * unit],
+          [x - 2 * unit, y, z],
+          [x - 1 * unit, y, z],
+          [x - 1 * unit, y, z - 3 * unit],
+          [x + 1 * unit, y, z - 3 * unit]
+        ].map(item => {
+          return new THREE.Vector3(item[0], item[1], item[2]);
+        })
+        let faces = [
+          [0, 1, 2],
+          [0, 2, 4],
+          [4, 2, 3],
+          [4, 5, 0],
+          [0, 5, 6]
+        ].map(item => {
+            return new THREE.Face3(item[0], item[1], item[2])
+        })
+        let geom = new THREE.Geometry()
+        geom.vertices = vertices
+        geom.faces = faces
+        geom.computeFaceNormals()
+        let material = new THREE.MeshBasicMaterial({
+          color: 0xff0000,
+          side: THREE.DoubleSide
+        })
+        let arrow = new THREE.Mesh(geom, material)
+        arrow.position.set(x, y, z)
+        this.scene.add(arrow)
     },
     addCube(pos, d) {
         let x = pos.x;
