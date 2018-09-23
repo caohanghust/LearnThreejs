@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="10px" height="12px" viewBox="0 0 10 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.1 (51147) - http://www.bohemiancoding.com/sketch -->
+    <title>Triangle</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="欢迎卡" transform="translate(-79.000000, -330.000000)" stroke="#28F8FF" stroke-width="0.8">
+            <g id="Group-44" transform="translate(33.000000, 255.157709)">
+                <g id="Group-43">
+                    <g id="Group-24" transform="translate(3.082569, 3.082569)">
+                        <g id="Group-22" transform="translate(2.055046, 3.082569)">
+                            <path d="M46.3138298,71.2372879 L51.1711091,77.4822287 C51.5101836,77.9181724 51.4316557,78.5464488 50.995712,78.8855233 C50.8201777,79.0220529 50.6041426,79.0961774 50.3817632,79.0961774 L42.1075741,79.0961774 C41.5552894,79.0961774 41.1075741,78.6484622 41.1075741,78.0961774 C41.1075741,77.9284167 41.1497794,77.7633519 41.230304,77.6161804 L44.6472137,71.3712397 C44.9123088,70.8867368 45.5199779,70.7088715 46.0044809,70.9739665 C46.1245276,71.03965 46.2298162,71.1292728 46.3138298,71.2372879 Z" id="Triangle" transform="translate(46.239771, 74.984847) rotate(90.000000) translate(-46.239771, -74.984847) "></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
